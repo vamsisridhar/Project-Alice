@@ -21,7 +21,7 @@ class Application
         void Render();
 
     protected:
-        GLFWwindow* window;  lll
+        GLFWwindow* window;
 
         EventHandler* ev_handler;
 
