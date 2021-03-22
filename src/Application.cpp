@@ -85,6 +85,9 @@ void Application::LoadShaders(){
 void Application::Run(){
     LOG("Initating Entry Point...");
 
+
+    
+
     
     std::vector<Shape*> RenderQueue;
     float s = 200;

@@ -24,6 +24,8 @@ Rect::Rect(float posX, float posY, float w, float h){
     LOG("RECT");
     w = w/WIN_WIDTH;
     h = h/WIN_HEIGHT;
+
+    
     
     std::vector<float> vertices = {
      w,  h, 0.0f,  // top right

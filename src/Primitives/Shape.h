@@ -13,6 +13,15 @@ class Shape{
         unsigned int EBO;
         void LoadBuffers(float* vertices, unsigned int* indices, int sizeof_vertices, int sizeof_indices);
         virtual void Draw(){};
+        struct Vertex{
+            float x, y, z;
+
+            Vertex(float x, float y, float z):x(x), y(y), z(z)
+            {
+                
+            }
+
+        };
         
 
 
