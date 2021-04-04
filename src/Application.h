@@ -20,6 +20,7 @@ class Application
         void Update();
         void Render(std::vector<Shape*> &RenderQueue);
         void LoadShaders();
+        void MathDebug();
 
     protected:
         int w_width, w_height;

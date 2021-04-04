@@ -2,6 +2,8 @@
 #include "EventHandler.h"
 #include <glfw/glfw3.h>
 #include <glad/glad.h>
+#include <glm.hpp>
+#include <gtx/transform.hpp>
 #include "common.h"
 int WIN_WIDTH = 1920;
 int WIN_HEIGHT = 1080;
@@ -19,6 +21,14 @@ Application::Application(){
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     ev_handler -> InitCallbackFuncs();
+
+    // MATHS HERE: -----------------------
+    MathDebug();
+
+
+
+
+
 
     window = glfwCreateWindow(this->w_width, this->w_height, "Alice", NULL, NULL);
     if (!window){
@@ -47,6 +57,24 @@ Application::~Application(){
     glfwTerminate();
     exit(EXIT_SUCCESS);
 }
+
+void Application::MathDebug(){
+
+    glm::mat4 myMatrix = glm::translate(glm::mat4(), glm::vec3(10.0f, 0.0f, 0.0f));
+
+    for (size_t i = 0; i <4; i++)
+    {
+        for (size_t j = 0; j  < 4;j++)
+        {
+            LOG(myMatrix[i][j]);
+        };
+        
+    };
+    
+
+
+}
+
 
 void Application::LoadShaders(){
     const char *vertexShaderSource = "#version 330 core\n"

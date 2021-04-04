@@ -37,6 +37,14 @@ target_include_directories("glad" PRIVATE "${GLAD_DIR}/include")
 target_include_directories("${PROJECT_NAME}" PRIVATE "${GLAD_DIR}/include")
 target_link_libraries("${PROJECT_NAME}" "glad" "${CMAKE_DL_LIBS}")
 
+#glm
+set(GLM_DIR "${LIB_DIR}/glm")
+add_subdirectory("${GLM_DIR}")
+target_link_libraries("${PROJECT_NAME}" "glm" "${GLM_LIBRARIES}")
+target_include_directories("${PROJECT_NAME}" PRIVATE "${GLM_DIR}/glm")
+target_compile_definitions("${PROJECT_NAME}" PRIVATE "GLFW_INCLUDE_NONE")
+
+
 
 # CPack
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
