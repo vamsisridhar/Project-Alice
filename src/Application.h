@@ -24,7 +24,7 @@ class Application
 
     protected:
         int w_width, w_height;
-        bool m_Running = false;
+        bool m_Running = true;
         GLFWwindow* window;
 
         EventHandler* ev_handler;
