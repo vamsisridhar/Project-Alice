@@ -1,182 +1,93 @@
-#include "Application.h"
-#include "EventHandler.h"
-#include <glfw/glfw3.h>
-#include <glad/glad.h>
+#include <Application.h>
+#include <Shape.h>
 #include <glm.hpp>
-#include <gtx/transform.hpp>
-#include "common.h"
-int WIN_WIDTH = 1920;
-int WIN_HEIGHT = 1080;
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
-Application::Application(){
-    this->w_width = WIN_WIDTH;
-    this->w_height = WIN_HEIGHT;
-    glfwSetErrorCallback(error_callback);
-    if (!glfwInit()) exit(EXIT_FAILURE);
 
-    LOG("Creating window of size: "<< std::to_string(w_width)<< ", "<<  std::to_string(w_height));
+Application::Application(int &WIN_WIDTH, int &WIN_HEIGHT, const char* &WIN_TITLE){
+    w_width = WIN_WIDTH;
+    w_height = WIN_HEIGHT;
+    w_title = WIN_TITLE;
+
+    glfwSetErrorCallback(errorCallback);
+    if(!glfwInit()) exit(EXIT_FAILURE);
+    
+    LOG("INITIALISING WINDOW ...");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    ev_handler -> InitCallbackFuncs();
+    window = glfwCreateWindow(w_width, w_height, w_title, NULL, NULL);
 
-    // MATHS HERE: -----------------------
-    MathDebug();
-
-
-
-
-
-
-    window = glfwCreateWindow(this->w_width, this->w_height, "Alice", NULL, NULL);
-    if (!window){
+    if(!window){
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
-    glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, keyCallback);
 
-    
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     glfwSwapInterval(1);
 
-    LOG("Initialisation Finished...");
-
     LoadShaders();
-
- 
-        
+    LOG("WINDOW INITIALISED ...");
 
 }
+
+void Application::LoadShaders(){
+    
+    shaderProgram =  new Shader("../src/Shaders/shader.vs", "../src/Shaders/shader.fs");
+
+}
+
+void Application::Run(const int& FPS){
+
+    while(w_running && !glfwWindowShouldClose(window)){
+        Sleep((1/FPS)*1000);
+        LOG("RUNNING...");
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+        
+        shaderProgram -> use();
+
+                
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 0.0f, 0.0f)); 
+        int modelLoc = glGetUniformLocation(shaderProgram->ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        int viewLoc = glGetUniformLocation(shaderProgram->ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+        int projectionLoc = glGetUniformLocation(shaderProgram->ID, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+        Cube* cube = new Cube(200, 300, 200);
+        cube->Draw();
+
+        
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+
+        
+    }
+}
+
+
 
 Application::~Application(){
     glfwDestroyWindow(window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
-}
-
-void Application::MathDebug(){
-
-    glm::mat4 myMatrix = glm::translate(glm::mat4(), glm::vec3(10.0f, 0.0f, 0.0f));
-
-    for (size_t i = 0; i <4; i++)
-    {
-        for (size_t j = 0; j  < 4;j++)
-        {
-            LOG(myMatrix[i][j]);
-        };
-        
-    };
-    
-
-
-}
-
-
-void Application::LoadShaders(){
-    const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
-
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    
-    shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-}
-
-void Application::Run(){
-    LOG("Initating Entry Point...");
-
-
-    
-
-    
-    std::vector<Shape*> RenderQueue;
-    float s = 200;
-    float increment = 5;
-    while(m_Running && !glfwWindowShouldClose(window)){
-        glfwGetWindowSize(window, &WIN_WIDTH, &WIN_HEIGHT);
-        LOG(WIN_WIDTH << " " << WIN_HEIGHT);
-
-
-        if (s>=500 || s<=100)
-        {
-            increment = -increment;
-        }
-
-        s += increment;
-
-        Sleep((1/60)*1000);
-        Rect* rect = new Rect(200, 300, s, s);
-        RenderQueue.push_back(&*rect);
-
-        Render(RenderQueue);
-
-        
-
-
-
-        for (size_t i = 0; i < RenderQueue.size(); i++)
-        {
-
-            delete (RenderQueue[i]);
-            RenderQueue[i] = nullptr;
-            
-        }
-        
-        
-
-
-        RenderQueue.clear();
-        //LOG(RenderQueue[0]);
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-}
-
-void Application::Render(std::vector<Shape*> &RenderQueue){
-    
-
-    glScalef(w_width, w_height, 0);
-    glClearColor(1.0f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    for (size_t i = 0; i < RenderQueue.size(); i++)
-    {
-        //LOG("RENDER LOOP");
-        // draw our first triangle
-        glUseProgram(shaderProgram);
-        RenderQueue[i]->Draw(); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
-        
-    }
-    
-        
-    glBindVertexArray(0);
-
 }

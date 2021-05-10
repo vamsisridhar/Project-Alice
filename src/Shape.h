@@ -11,29 +11,25 @@ class Shape{
         unsigned int VBO;
         
         unsigned int EBO;
-        void LoadBuffers(float* vertices, unsigned int* indices, int sizeof_vertices, int sizeof_indices);
+        void LoadBuffers(float* vertices, int sizeof_vertices);
         virtual void Draw(){};
-        struct Vertex{
-            float x, y, z;
-
-            Vertex(float x, float y, float z):x(x), y(y), z(z)
-            {
-                
-            }
-
-        };
-        
-
 
 };
-
 
 class Rect:public Shape{
     public:
         Rect(float posX, float posY, float width, float height);
-    
+
         virtual ~Rect(){};
 
         virtual void Draw();
+};
 
+class Cube:public Shape{
+    public:
+        Cube(float posX, float posY, float scale);
+
+        virtual ~Cube(){};
+
+        virtual void Draw();
 };

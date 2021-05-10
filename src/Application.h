@@ -1,34 +1,24 @@
 #pragma once
-#include <glfw/glfw3.h>
-#include <glad/glad.h>
-#include "EventHandler.h"
-#include "common.h"
-#include "Primitives/Shape.h"
+#include <common.h>
+
+
 class Application
 {
     public:
-        Application();
+        Application(int &WIN_WIDTH, int &WIN_HEIGHT, const char* &WIN_TITLE);
         virtual ~Application();
-        void Run();
+        void Run(const int& fps);
+
     private:
-
-        
-        static void error_callback(int error, const char* description){fprintf(stderr, "Error: %s\n", description);}
-        static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)glfwSetWindowShouldClose(window, GLFW_TRUE);}
-
-        void Events();
-        void Update();
-        void Render(std::vector<Shape*> &RenderQueue);
+        static void errorCallback(int error, const char* description){fprintf(stderr, "Error: %s\n", description);}
+        static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)glfwSetWindowShouldClose(window, GLFW_TRUE);}
+        void WinInit(); 
         void LoadShaders();
-        void MathDebug();
-
     protected:
         int w_width, w_height;
-        bool m_Running = true;
+        const char* w_title;
+        bool w_running = true;
         GLFWwindow* window;
-
-        EventHandler* ev_handler;
-        unsigned int shaderProgram;
-        
+        Shader* shaderProgram;
 
 };
