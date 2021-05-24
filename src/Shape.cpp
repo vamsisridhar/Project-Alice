@@ -23,77 +23,93 @@ void Shape::LoadBuffers(float* vertices, int sizeof_vertices){
 
 }
 
-Rect::Rect(float posX, float posY, float w, float h){
+
+
+Rect::Rect(float scalex, float scaley){
 
     float vertices[] = {
-        -0.5f, 0.5f, 0.0f, // top left point
-        0.5f, 0.5f, 0.0f, // top right point
-        0.5f, -0.5f, 0.0f, // bottom right point
-        0.5f, -0.5f, 0.0f, // bottom right point
-        -0.5f, 0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f // bottom left point
+        -1.0f, 1.0f, 0.0f, // top left point
+        1.0f, 1.0f, 0.0f, // top right point
+        1.0f, -1.0f, 0.0f, // bottom right point
+        1.0f, -1.0f, 0.0f, // bottom right point
+        -1.0f, 1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f // bottom left point
    
     };
+    
 
+
+    
     LoadBuffers(vertices, 3 * 6);
 
 }
 
-void Rect::Draw(){
+void Rect::Draw(Shader *shaderProgram){
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3 * 6);
 
 }
 
-Cube::Cube(float posX, float posY, float s){
+Cube::Cube(float posX, float posY, float posZ){
 
+    this->posX = posX;
+    this->posY = posY;
+    this->posZ = posZ;
 
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f, 
-        0.5f, -0.5f, -0.5f, 
-        0.5f,  0.5f, -0.5f, 
-        0.5f,  0.5f, -0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        0.5f, -0.5f,  0.5f, 
-        0.5f,  0.5f,  0.5f, 
-        0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-        0.5f,  0.5f,  0.5f, 
-        0.5f,  0.5f, -0.5f, 
-        0.5f, -0.5f, -0.5f, 
-        0.5f, -0.5f, -0.5f, 
-        0.5f, -0.5f,  0.5f, 
-        0.5f,  0.5f,  0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        0.5f, -0.5f, -0.5f, 
-        0.5f, -0.5f,  0.5f, 
-        0.5f, -0.5f,  0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        0.5f,  0.5f, -0.5f, 
-        0.5f,  0.5f,  0.5f, 
-        0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f
+        -1.0f, -1.0f, -1.0f, 
+        1.0f, -1.0f, -1.0f, 
+        1.0f,  1.0f, -1.0f, 
+        1.0f,  1.0f, -1.0f, 
+        -1.0f,  1.0f, -1.0f, 
+        -1.0f, -1.0f, -1.0f, 
+        -1.0f, -1.0f,  1.0f, 
+        1.0f, -1.0f,  1.0f, 
+        1.0f,  1.0f,  1.0f, 
+        1.0f,  1.0f,  1.0f, 
+        -1.0f,  1.0f,  1.0f, 
+        -1.0f, -1.0f,  1.0f, 
+        -1.0f,  1.0f,  1.0f, 
+        -1.0f,  1.0f, -1.0f, 
+        -1.0f, -1.0f, -1.0f, 
+        -1.0f, -1.0f, -1.0f, 
+        -1.0f, -1.0f,  1.0f, 
+        -1.0f,  1.0f,  1.0f, 
+        1.0f,  1.0f,  1.0f, 
+        1.0f,  1.0f, -1.0f, 
+        1.0f, -1.0f, -1.0f, 
+        1.0f, -1.0f, -1.0f, 
+        1.0f, -1.0f,  1.0f, 
+        1.0f,  1.0f,  1.0f, 
+        -1.0f, -1.0f, -1.0f, 
+        1.0f, -1.0f, -1.0f, 
+        1.0f, -1.0f,  1.0f, 
+        1.0f, -1.0f,  1.0f, 
+        -1.0f, -1.0f,  1.0f, 
+        -1.0f, -1.0f, -1.0f, 
+        -1.0f,  1.0f, -1.0f, 
+        1.0f,  1.0f, -1.0f, 
+        1.0f,  1.0f,  1.0f, 
+        1.0f,  1.0f,  1.0f, 
+        -1.0f,  1.0f,  1.0f, 
+        -1.0f,  1.0f, -1.0f
     };
 
     LoadBuffers(vertices, 36*3);
 
+    ;
+
 }
 
-void Cube::Draw(){
+void Cube::Draw(Shader *shaderProgram){
 
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(posX, posY, posZ)); 
+    model = glm::rotate(model, (float)(glm::radians(60.0) * (float)glfwGetTime()), glm::vec3(1.0f, 0.3f, 0.5f));
+    int modelLoc = glGetUniformLocation(shaderProgram->ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36*3);
 

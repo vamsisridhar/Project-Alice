@@ -1,5 +1,5 @@
 #pragma once
-#include "common.h"
+#include <common.h>
 
 class Shape{
 
@@ -12,24 +12,26 @@ class Shape{
         
         unsigned int EBO;
         void LoadBuffers(float* vertices, int sizeof_vertices);
-        virtual void Draw(){};
+        virtual void Draw(Shader *shaderProgram){};
+
+        float posX, posY, posZ; /// Needs to be made into Vector
 
 };
 
 class Rect:public Shape{
     public:
-        Rect(float posX, float posY, float width, float height);
+        Rect(float scalex, float scaley);
 
         virtual ~Rect(){};
 
-        virtual void Draw();
+        virtual void Draw(Shader *shaderProgram);
 };
 
 class Cube:public Shape{
     public:
-        Cube(float posX, float posY, float scale);
+        Cube(float scalex, float scaley, float scalez);
 
         virtual ~Cube(){};
 
-        virtual void Draw();
+        virtual void Draw(Shader *shaderProgram);
 };

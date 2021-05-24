@@ -1,11 +1,9 @@
 #include <Application.h>
 #include <Shape.h>
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp>
-#include <gtc/type_ptr.hpp>
 
 
-Application::Application(int &WIN_WIDTH, int &WIN_HEIGHT, const char* &WIN_TITLE){
+
+Application::Application(float &WIN_WIDTH, float &WIN_HEIGHT, const char* &WIN_TITLE){
     w_width = WIN_WIDTH;
     w_height = WIN_HEIGHT;
     w_title = WIN_TITLE;
@@ -35,6 +33,9 @@ Application::Application(int &WIN_WIDTH, int &WIN_HEIGHT, const char* &WIN_TITLE
     LoadShaders();
     LOG("WINDOW INITIALISED ...");
 
+
+
+
 }
 
 void Application::LoadShaders(){
@@ -44,8 +45,9 @@ void Application::LoadShaders(){
 }
 
 void Application::Run(const int& FPS){
-
+    
     while(w_running && !glfwWindowShouldClose(window)){
+        std::vector<Shape*> renderQueue;
         Sleep((1/FPS)*1000);
         LOG("RUNNING...");
 
@@ -56,10 +58,14 @@ void Application::Run(const int& FPS){
         shaderProgram -> use();
 
                 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 0.0f, 0.0f)); 
-        int modelLoc = glGetUniformLocation(shaderProgram->ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        
+        
+
+
+        Cube* c1 = new Cube(2.0f, 5.0f, -15.0f);
+        renderQueue.push_back(c1);
+        Cube* c2 = new Cube(2.0f, -5.0f, -15.0f);
+        renderQueue.push_back(c2);
 
         glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
@@ -67,14 +73,19 @@ void Application::Run(const int& FPS){
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(60.0f) , w_width/w_height , 0.1f, 100.0f);
         int projectionLoc = glGetUniformLocation(shaderProgram->ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        
 
+ 
+        for (size_t i = 0; i < renderQueue.size(); i++)
+        {
+            renderQueue[i]->Draw(shaderProgram);
+        }
 
-        Cube* cube = new Cube(200, 300, 200);
-        cube->Draw();
-
+        renderQueue.clear();
+        renderQueue.shrink_to_fit();
         
 
         glfwSwapBuffers(window);
@@ -91,3 +102,4 @@ Application::~Application(){
     glfwTerminate();
     exit(EXIT_SUCCESS);
 }
+

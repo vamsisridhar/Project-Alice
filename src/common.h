@@ -16,10 +16,15 @@
 
 #define LOG(...) std::cout << __VA_ARGS__ << '\n'
 
-extern int WIN_WIDTH;
-extern int WIN_HEIGHT;
+extern float WIN_WIDTH;
+extern float WIN_HEIGHT;
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
+
 #include <Shader.h>
+#include <Math/Math.h>

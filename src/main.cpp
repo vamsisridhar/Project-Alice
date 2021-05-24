@@ -1,8 +1,8 @@
 #include <common.h>
 #include <Application.h>
 
-int WIN_WIDTH = 1920;
-int WIN_HEIGHT = 1080;
+float WIN_WIDTH = 1920.0f;
+float WIN_HEIGHT = 1080.0f;
 
 int main(){
     
